@@ -1,0 +1,10 @@
+services:
+  dadogar_web:
+    build: .
+    container_name: dadogar_web
+    ports:
+      - "80:80"
+    volumes:
+      - .:/var/www/html/
+   
+
