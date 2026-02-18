@@ -1,61 +1,46 @@
 <?php
+require 'constantes.php';
 
-require constantes.php;
+$error=0; 
+$mensajes = [
+    1 => 'Usuario o contraseña no válidos.',   // mensaje genérico, no revelar cuál falla
+    2 => 'Usuario o contraseña incorrectos.',
+    3 => 'Error interno. Inténtalo más tarde.',
+];
 
-
-
+function validarPass(string $password): bool {
+    return strlen($password) >= 8
+        && strlen($password) <= 20         
+        && preg_match('/[A-Z]/', $password)
+        && preg_match('/[a-z]/', $password)
+        && preg_match('/[0-9]/', $password)
+        && preg_match('/[\W_]/', $password);
+}
 
 //recogemos las entradas del formulario si la peticion es post
 if($_SERVER['REQUEST_METHOD'] == 'POST'){
     //inicializamos las variables
-$USERNAME = htmlspecialchars($_POST['username'], ENT_QUOTES, 'UTF-8');
-$PASSSWORD = htmlspecialchars($_POST['password'], ENT_QUOTES, 'UTF-8');
-$error=0;   
-    
-    function validarPass($password) {
-        // longitud
-        if (strlen($password) < 8 || strlen($password) > 20) {
-            return 1;
-        }
+$USERNAME = htmlspecialchars($_POST['username'], ENT_QUOTES, 'UTF-8'); //Vericamos que el username es alfanumerico
+$PASSWORD = $_POST['password']; // No aplicamos htmlspecialchars a la contraseña para no alterar los caracteres especiales. 
 
-        // mayuscula
-        if (!preg_match('/[A-Z]/', $password)) {
-            return 1;
+        // 3. Validar formato username (solo alfanumérico, 3-30 chars)
+        if (!ctype_alnum($username) || strlen($username) < 3 || strlen($username) > 30) {
+            $error = 1;
         }
-
-        // minuscula
-        if (!preg_match('/[a-z]/', $password)) {
-            return 1;
+        // 4. Validar complejidad de contraseña
+        elseif (!validarPass($password)) {
+            $error = 1;
         }
-
-        // numero
-        if (!preg_match('/[0-9]/', $password)) {
-            return 1;
-        }
-
-        // caracter especial
-        if (!preg_match('/[\W_]/', $password)) {
-            return 1;
-        }
-
-        return 0;    
-    }
-    
-    if (!ctype_alnum($username)){
-        $error = 2;
-        
-    }
         
         
-    
         if($error === 0){
            $dsn = "mysql:host=HOST;port=PORT;dbname=DB;";
            
            try {
                $conexionDB = new PDO($dsn, USER, PASSW);
-               $query = 'SELECT * FROM users WHERE email = :email';
-               $values = [':email' => $correo];
-               $res = $pdo->prepare($query);
+               $query = 'SELECT * FROM users WHERE username = :username';
+               $values = [':username' => $USERNAME];
+               $res = $conexionDB->prepare($query);
                $res->execute($values);
                
                $row = $res->fetch(PDO::FETCH_ASSOC);
@@ -72,13 +57,8 @@ $error=0;
                        
            } catch (Exception $exc) {
                $error = 3;
-           }
-           
-           
-            
+           }                             
 }}
-
-
 
 ?>
 
@@ -92,21 +72,16 @@ $error=0;
     </head>
     <body>
         <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">
-            <input type="text" name="correo" id="correo">
+            <input type="text" name="username" id="username">
             <input type="password" name="password" id="password"> 
             <input type="submit">
-            <p>
-            <?php 
-    if ($error !== 0) {
-        $mensajes = [
 
-        ];
-
-        // Mostramos el mensaje o uno genérico si el código no existe
-        echo $mensajes[$error] ?? "Ha ocurrido un error inesperado.";
-    }
-    ?>
+            <?php if ($error !== 0): ?>
+            <p class="error">
+                <?php echo htmlspecialchars($mensajes[$error] ?? 'Error inesperado.', ENT_QUOTES, 'UTF-8'); ?>
             </p>
+            <?php endif; ?>
+
         </form>
     </body>
 </html>
