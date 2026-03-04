@@ -1,15 +1,7 @@
 <?php
 
-// Desactivar la visualización de errores al usuario
-ini_set('display_errors', 0);
-ini_set('display_startup_errors', 0);
-
-// Registrar errores en un archivo privado para tu revisión
-error_reporting(E_ALL);
-ini_set('log_errors', 1);
-ini_set('error_log', '/var/www/html/php-error.log');
-
-require 'constantes.php';
+require 'constantes.php'; // importamos las variables de entorno.
+require 'fuctions.php';
 
 $error=0;  
 $mensajes = [
@@ -18,15 +10,6 @@ $mensajes = [
     3 => 'Error interno. Inténtalo más tarde.',
 ];
 
-function validarPass(string $PASSWORD): bool {
-    return strlen($PASSWORD) >= 8
-        && strlen($PASSWORD) <= 20         
-        && preg_match('/[A-Z]/', $PASSWORD)
-        && preg_match('/[a-z]/', $PASSWORD)
-        && preg_match('/[0-9]/', $PASSWORD)
-        && preg_match('/[\W_]/', $PASSWORD);
-}
-
 //recogemos las entradas del formulario si la peticion es post
 if($_SERVER['REQUEST_METHOD'] == 'POST'){
     //inicializamos las variables
@@ -34,7 +17,7 @@ $USERNAME = htmlspecialchars($_POST['USERNAME'], ENT_QUOTES, 'UTF-8'); //Vericam
 $PASSWORD = $_POST['PASSWORD']; // No aplicamos htmlspecialchars a la contraseña para no alterar los caracteres especiales. 
 
         // 3. Validar formato USERNAME (solo alfanumérico, 3-30 chars)
-        if (!ctype_alnum($USERNAME) || strlen($USERNAME) < 3 || strlen($USERNAME) > 30) {
+        if (!esNombreUsuarioValido($USERNAME)) {
             $error = 1;
         }
         // 4. Validar complejidad de contraseña
@@ -42,42 +25,42 @@ $PASSWORD = $_POST['PASSWORD']; // No aplicamos htmlspecialchars a la contraseñ
             $error = 0;
         }
         
-        
+        //Si el no da error una validacion anterior conecto con base de datos
         if($error == 0){
            $dsn = "mysql:host=" . HOST . ";port=" . PORT . ";dbname=" . DB . ";charset=utf8mb4";
            
-           try {
-               $conexionDB = new PDO($dsn, USER, PASSW);
-               $query = 'SELECT * FROM users WHERE username = :USERNAME';
+           try { // Utilizamos un tricach por si acaso fallase controlar el error
+               $conexionDB = new PDO($dsn, USER, PASSW); // usando los datos del fichero constantes.php nos conectamos con PDO a la base de datos
+               $query = 'SELECT * FROM users WHERE username = :USERNAME'; //Definimos que query queremos que haga sql
                $values = [':USERNAME' => $USERNAME];
-               $res = $conexionDB->prepare($query);
+               $res = $conexionDB->prepare($query); //la preparamos para escapar caracteres extraños
                $res->execute($values);
                
-               $row = $res->fetch(PDO::FETCH_ASSOC);
+               $row = $res->fetch(PDO::FETCH_ASSOC); // nos traemos la row del usuario que buscamos
               
-               if ($row !== false) {
+               if ($row !== false) { //si no viene vacia, lo que significaria que no existe
     
-    if (password_verify($PASSWORD, $row["password"])) {
+    if (password_verify($PASSWORD, $row["password"])) { //verificamos con password verifi que la constraseña del formulario coincide con la de la base de datos
         
-        if (session_status() === PHP_SESSION_NONE) {
+        if (session_status() === PHP_SESSION_NONE) { //si coincide,y no tenia sesion anteriormente, le abro sesion
             session_start();
         }
-             
-        $_SESSION['user_id'] = $row['id'];
+         // en la sesion metemos datos como id, username, y role    
+        $_SESSION['user_id'] = $row['id'];  
         $_SESSION['username'] = $row['username']; 
         $_SESSION['role'] = $row['role']; 
         
       
-        header("Location: home.php");
-        exit(); 
-        
+        header("Location: home.php"); // redirigimos al home     
     } else {
         $error = 2;
     }
+}else{
+    $error = 2;
 }
                        
            } catch (Exception $exc) {
-               $error = 3;
+               $error = 3; // si no funcionase la conexion a la bae de datos saltamos systemerror.
            }                             
 }}
 
@@ -94,7 +77,7 @@ $PASSWORD = $_POST['PASSWORD']; // No aplicamos htmlspecialchars a la contraseñ
     </head>
     <body>
         <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">
-            <input type="text" name="USERNAME" id="USERNAME" required autocomplete="off" placeholder="Tu usuario">
+            <input type="text" name="USERNAME" id="USERNAME" required autocomplete="off" placeholder="Tu usuario"> 
             <input type="PASSWORD" name="PASSWORD" id="PASSWORD" required placeholder="••••••••"> 
             <input type="submit">
 

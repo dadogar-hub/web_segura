@@ -1,13 +1,13 @@
 <?php
 
-session_start();
+session_start(); //inciamos la sesion
 
 
-if (!isset($_SESSION['user_id'])) {
-    header("Location: index.php");
+if (!isset($_SESSION['user_id'])) {//vemos si la sesion trae datos
+    header("Location: login.php"); //si no los trae lo redirigimos al login.
     exit(); 
 }
-$nombre_usuario = htmlspecialchars($_SESSION['username'], ENT_QUOTES, 'UTF-8');
+$nombre_usuario = htmlspecialchars($_SESSION['username'], ENT_QUOTES, 'UTF-8'); //La pagina es una simple pagina en la que vemos que usaurio somos y podemos cerrar sesion.
 ?>
 
 <!DOCTYPE html>
