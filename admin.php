@@ -8,7 +8,7 @@ if (!isset($_SESSION['user_id'])) { //verifico que tenga sesion
     header("Location: login.php");
 } elseif ($_SESSION['role'] !== 'ROLE_ADMIN') { //que en dicha sesion sea rol admin
     $_SESSION['alerta'] = "Acceso no autorizado.";
-    header("Location: home.php");
+    header("Location: index.php");
 } else {
     $acceso_permitido = true;
     $nombre_usuario = htmlspecialchars($_SESSION['username'], ENT_QUOTES, 'UTF-8');
