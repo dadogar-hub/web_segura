@@ -21,6 +21,8 @@ body {
     max-width: 380px;
     padding: 2.5rem;
     border: 1px solid #e5e7eb;
+    border-radius: 8px; /* Un toque sutil de redondeo */
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
 }
 
 h1 {
@@ -28,6 +30,7 @@ h1 {
     font-weight: 600;
     margin-bottom: 2rem;
     color: #000000;
+    text-align: center;
 }
 
 .form-group {
@@ -42,7 +45,9 @@ label {
     color: #374151;
 }
 
+/* Añadido input[type="email"] */
 input[type="text"],
+input[type="email"],
 input[type="password"] {
     width: 100%;
     padding: 0.75rem;
@@ -51,10 +56,11 @@ input[type="password"] {
     border-radius: 4px;
     font-size: 1rem;
     color: #111827;
-    transition: border-color 0.1s;
+    transition: all 0.2s;
 }
 
 input[type="text"]:focus,
+input[type="email"]:focus,
 input[type="password"]:focus {
     outline: none;
     border-color: #000000;
@@ -71,13 +77,14 @@ input[type="submit"] {
     font-size: 0.875rem;
     font-weight: 600;
     cursor: pointer;
-    margin-top: 1rem;
+    margin-top: 0.5rem;
 }
 
 input[type="submit"]:hover {
     background-color: #1f2937;
 }
 
+/* Estilo para los mensajes de error */
 .error-box {
     margin-top: 1.5rem;
     padding: 0.75rem;
@@ -86,4 +93,19 @@ input[type="submit"]:hover {
     color: #991b1b;
     font-size: 0.875rem;
     text-align: center;
+    border-radius: 4px;
+}
+
+.footer-link {
+    display: block;
+    text-align: center;
+    margin-top: 1.5rem;
+    font-size: 0.875rem;
+    color: #4b5563;
+    text-decoration: none;
+}
+
+.footer-link:hover {
+    text-decoration: underline;
+    color: #000000;
 }

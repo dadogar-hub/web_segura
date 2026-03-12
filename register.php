@@ -88,28 +88,41 @@ if (!$registro_exitoso):
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="login-container">
-        <h1>Crea tu cuenta</h1>
-        
-        <form method="post" action="<?= htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
-            <input type="text" name="USERNAME" placeholder="Usuario" required autocomplete="off" value="<?= isset($USERNAME) ? $USERNAME : '' ?>">
-            <input type="email" name="EMAIL" placeholder="Correo electrónico" required value="<?= isset($EMAIL) ? $EMAIL : '' ?>">
-            <input type="password" name="PASSWORD" placeholder="Contraseña" required>
-            <input type="password" name="PASSWORD_CONFIRM" placeholder="Repite la contraseña" required>
-            
-            <input type="submit" value="Registrarse">
+   <div class="login-container">
+    <h1>Crea tu cuenta</h1>
+    
+    <form method="post" action="<?= htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
+        <div class="form-group">
+            <label>Usuario</label>
+            <input type="text" name="USERNAME" placeholder="Ej. juanito123" required autocomplete="off" value="<?= $USERNAME ?? '' ?>">
+        </div>
 
-            <?php if ($error !== 0): ?>
-                <p class="error">
-                    <?= htmlspecialchars($mensajes[$error], ENT_QUOTES, 'UTF-8'); ?>
-                </p>
-            <?php endif; ?>
-        </form>
+        <div class="form-group">
+            <label>Correo electrónico</label>
+            <input type="email" name="EMAIL" placeholder="correo@ejemplo.com" required value="<?= $EMAIL ?? '' ?>">
+        </div>
+
+        <div class="form-group">
+            <label>Contraseña</label>
+            <input type="password" name="PASSWORD" placeholder="••••••••" required>
+        </div>
+
+        <div class="form-group">
+            <label>Confirmar contraseña</label>
+            <input type="password" name="PASSWORD_CONFIRM" placeholder="••••••••" required>
+        </div>
         
-        <p style="text-align: center; margin-top: 1rem;">
-            <a href="login.php">¿Ya tienes cuenta? Entra aquí</a>
-        </p>
-    </div>
+        <input type="submit" value="Registrarse">
+
+        <?php if (isset($error) && $error !== 0): ?>
+            <div class="error-box">
+                <?= htmlspecialchars($mensajes[$error], ENT_QUOTES, 'UTF-8'); ?>
+            </div>
+        <?php endif; ?>
+    </form>
+    
+    <a href="login.php" class="footer-link">¿Ya tienes cuenta? Entra aquí</a>
+</div>
 </body>
 </html>
 <?php endif; ?>

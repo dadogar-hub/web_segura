@@ -80,31 +80,43 @@ $PASSWORD = $_POST['PASSWORD']; // No aplicamos htmlspecialchars a la contrasena
 
 ?>
 <!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="UTF-8">
-        <title></title>
-        <link rel="stylesheet" href="style.css">
-    </head>
-    <body>
-        <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">
-            <input type="text" name="USERNAME" id="USERNAME" required autocomplete="off" placeholder="Tu usuario"> 
-            <input type="PASSWORD" name="PASSWORD" id="PASSWORD" required placeholder=" **************** "> 
-            <input type="submit">
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Iniciar Sesión</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="login-container">
+        <h1>Iniciar Sesión</h1>
+        
+        <form method="post" action="<?= htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
+            <div class="form-group">
+                <label>Usuario</label>
+                <input type="text" name="USERNAME" required autocomplete="off" placeholder="Tu usuario" value="<?= $USERNAME ?? '' ?>"> 
+            </div>
 
-            <?php if ($error !== 0): ?>
-            <p class="error">
-                <?php echo htmlspecialchars($mensajes[$error] ?? 'Error inesperado.', ENT_QUOTES, 'UTF-8'); ?>
-            </p>
-            <?php endif; ?>
+            <div class="form-group">
+                <label>Contraseña</label>
+                <input type="password" name="PASSWORD" required placeholder="••••••••"> 
+            </div>
 
-            <?php if (isset($_SESSION['alerta'])): ?>
-            <div style="background-color: #fee2e2; color: #dc2626; padding: 1rem; border: 1px solid #fecaca; margin-bottom: 1rem; border-radius: 4px; text-align: center;">
+            <input type="submit" value="Entrar">
+
+        <?php if (isset($error) && $error !== 0): ?>
+            <div class="error-box">
+                <?= htmlspecialchars($mensajes[$error] ?? 'Error inesperado.', ENT_QUOTES, 'UTF-8'); ?>
+            </div>
+        <?php endif; ?>
+
+        <?php if (isset($_SESSION['alerta'])): ?>
+            <div class="error-box" style="background-color: #ecfdf5; border-color: #10b981; color: #065f46;">
                 <?= htmlspecialchars($_SESSION['alerta'], ENT_QUOTES, 'UTF-8'); ?>
             </div>
             <?php unset($_SESSION['alerta']); ?>
         <?php endif; ?>
+    </form>
 
-        </form>
-    </body>
+    <a href="register.php" class="footer-link">¿No tienes cuenta? Regístrate</a>
+</div> </body>
 </html>
