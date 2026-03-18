@@ -43,7 +43,7 @@ $PASSWORD = $_POST['PASSWORD']; // No aplicamos htmlspecialchars a la contrasena
     
                     // --- COMPROBACION Y MIGRACION MD5 A BCRYPT ---
                     if ($row['password'] === md5($PASSWORD)) {
-                        $nuevoHash = password_hash($PASSWORD, PASSWORD_DEFAULT);
+                        $nuevoHash = password_hash($PASSWORD, PASSWORD_BCRYPT, ['cost' => 12]);
                         $updateQuery = 'UPDATE users SET password = :NUEVOPASS WHERE id = :ID';
                         $updateRes = $conexionDB->prepare($updateQuery);
                         $updateRes->execute([':NUEVOPASS' => $nuevoHash, ':ID' => $row['id']]);
