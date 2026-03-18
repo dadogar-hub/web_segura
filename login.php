@@ -23,7 +23,7 @@ $PASSWORD = $_POST['PASSWORD']; // No aplicamos htmlspecialchars a la contrasena
         }
         // 4. Validar complejidad de contrasena
         elseif (!validarPass($PASSWORD)) {
-            $error = 0;
+            $error = 1;
         }
 
         //Si el no da error una validacion anterior conecto con base de datos
